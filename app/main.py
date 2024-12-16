@@ -27,6 +27,12 @@ class Product(BaseModel):
     cantidad: int
     descripcion: str
 
+class Purchase(BaseModel):
+    nombre: str
+    email: str
+    direccion: str
+    productos: List[Product]
+
 # Datos hardcodeados
 products = [
     {
@@ -35,7 +41,7 @@ products = [
         "titulo": "Huerto en casa",
         "precio": "$200",
         "cantidad": 0,
-        "descripcion": "Aprende a crear y mantener tu propio huerto urbano"
+        "descripcion": "Aprende a crear y mantener tu propio huerto urbano",
     },
     {
         "id": "2",
@@ -43,7 +49,7 @@ products = [
         "titulo": "Decora tu hogar",
         "precio": "$1020",
         "cantidad": 0,
-        "descripcion": "Técnicas profesionales de decoración de interiores"
+        "descripcion": "Técnicas profesionales de decoración de interiores",
     },
     {
         "id": "3",
@@ -51,9 +57,11 @@ products = [
         "titulo": "Diseño Web",
         "precio": "$1020",
         "cantidad": 0,
-        "descripcion": "Domina las últimas tecnologías web"
-    }
+        "descripcion": "Domina las últimas tecnologías web",
+    },
 ]
+
+purchases = []  # Lista para almacenar compras temporalmente
 
 @app.get("/products", response_model=List[Product])
 async def get_products():
@@ -65,6 +73,11 @@ async def get_product(product_id: str):
         if product["id"] == product_id:
             return product
     return {"error": "Product not found"}
+
+@app.post("/purchases")
+async def create_purchase(purchase: Purchase):
+    purchases.append(purchase.dict())  # Guardar compra temporalmente
+    return {"message": "Compra registrada con éxito", "purchase": purchase}
 
 if __name__ == "__main__":
     import uvicorn
